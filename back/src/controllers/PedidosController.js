@@ -57,7 +57,7 @@ async function actualizarPedido(req, res) {
             .input("Estado", sql.NVarChar(20), estado)
             .execute("usp_ActualizarPedido");
 
-        res.json({ mensaje: "Pedido actualizado correctamente" });
+        res.json({ mensaje: "Pedido fue actualizado correctamente" });
     } catch (error) {
     
         if (error.message.includes("50002")) {
@@ -87,7 +87,7 @@ async function eliminarPedido(req, res) {
             .input("IdPedido", sql.Int, id)
             .execute("usp_EliminarPedido");
 
-        res.json({ mensaje: "Pedido eliminado correctamente" });
+        res.json({ mensaje: "Pedido fue eliminado correctamente" });
     } catch (error) {
         
         if (error.message.includes("50002")) {
