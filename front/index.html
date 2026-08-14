@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurante La Esquina</title>
+
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+    <header>
+        <p>La Esquina</p>
+        <h2>Gestión de Pedidos</h2>
+    </header>
+
+    <nav>
+        <a href="#nuevo-pedido">Nuevo Pedido</a>
+        <a href="#pedidos">Pedidos tomados</a>
+    </nav>
+
+
+    <div class="contenido-principal">
+
+        <div class="container" id="nuevo-pedido">
+
+            <h2>Registrar nuevo pedido</h2>
+
+            <form id="form-pedido">
+
+                <!-- MESA -->
+
+                <div class="form-group">
+
+                    <label for="mesa">
+                        Mesa
+                    </label>
+
+                    <input
+                        type="number"
+                        id="mesa"
+                        min="1"
+                        placeholder="Número de mesa"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PLATO -->
+
+                <div class="form-group">
+
+                    <label for="idPlato">
+                        Plato
+                    </label>
+
+                    <select id="idPlato" required>
+
+                        <option
+                            value=""
+                            disabled
+                            selected
+                        >
+                            Seleccione un plato
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- CANTIDAD -->
+
+                <div class="form-group">
+
+                    <label for="cantidad">
+                        Cantidad
+                    </label>
+
+                    <input
+                        type="number"
+                        id="cantidad"
+                        min="1"
+                        value="1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- BOTÓN -->
+
+                <button type="submit">
+                    Tomar pedido
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ================================
+             PEDIDOS TOMADOS
+        ================================= -->
+
+        <div class="container" id="pedidos">
+
+            <h2>Pedidos tomados</h2>
+
+
+            <!-- FILTROS -->
+
+            <div class="filtros">
+
+                <button
+                    type="button"
+                    id="btn-todos"
+                >
+                    Todos
+                </button>
+
+                <button
+                    type="button"
+                    id="btn-en-curso"
+                >
+                    En curso
+                </button>
+
+            </div>
+
+
+            <!-- LISTA DE PEDIDOS -->
+
+            <div
+                id="lista-pedidos"
+                class="lista-pedidos"
+            >
+
+                <!--
+                    JavaScript va a generar
+                    las tarjetas de pedidos acá.
+                -->
+
+            </div>
+
+        </div>
+
+    </div>
+  <footer>
+    
+        <p>© 2024 Restaurante La Esquina. Todos los derechos reservados.</p>  
+
+    </footer>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
