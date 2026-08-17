@@ -1,13 +1,5 @@
-// =====================================================
-// CONFIGURACIÓN
-// =====================================================
 
 const API_URL = "http://localhost:3000/api";
-
-
-// =====================================================
-// ELEMENTOS DEL HTML
-// =====================================================
 
 const formulario = document.getElementById("form-pedido");
 
@@ -23,17 +15,17 @@ const btnTodos = document.getElementById("btn-todos");
 
 const btnEnCurso = document.getElementById("btn-en-curso");
 
+const btnConsultarCuenta = document.getElementById("btn-consultar-cuenta");
 
-// =====================================================
-// FILTRO ACTUAL
-// =====================================================
+const inputMesaCuenta = document.getElementById("mesa-cuenta");
+
+const divResultadoCuenta = document.getElementById("resultado-cuenta");
+
+
 
 let filtroActual = "todos";
 
 
-// =====================================================
-// AL CARGAR LA PÁGINA
-// =====================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -41,13 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cargarPedidos();
 
+    if (btnConsultarCuenta) {
+        btnConsultarCuenta.addEventListener("click", consultarTotalMesa);
+    }
+
 });
 
 
-// =====================================================
-// CARGAR PLATOS
-// GET /api/platos
-// =====================================================
+
 
 async function cargarPlatos() {
 
@@ -72,8 +65,6 @@ async function cargarPlatos() {
             </option>
         `;
 
-
-        // Agregar platos
 
         platos.forEach(plato => {
 
@@ -103,10 +94,7 @@ async function cargarPlatos() {
 }
 
 
-// =====================================================
-// CARGAR PEDIDOS
-// GET /api/pedidos
-// =====================================================
+
 
 async function cargarPedidos() {
 
@@ -143,19 +131,12 @@ async function cargarPedidos() {
 }
 
 
-// =====================================================
-// MOSTRAR PEDIDOS
-// =====================================================
+
 
 function mostrarPedidos(pedidos) {
 
     listaPedidos.innerHTML = "";
 
-
-    // =================================================
-    // FILTRO "EN CURSO"
-    // Oculta los entregados
-    // =================================================
 
     if (filtroActual === "en-curso") {
 
@@ -166,9 +147,6 @@ function mostrarPedidos(pedidos) {
     }
 
 
-    // =================================================
-    // SI NO HAY PEDIDOS
-    // =================================================
 
     if (pedidos.length === 0) {
 
@@ -186,11 +164,6 @@ function mostrarPedidos(pedidos) {
 
     }
 
-
-    // =================================================
-    // CREAR TARJETAS
-    // =================================================
-
     pedidos.forEach(pedido => {
 
         const tarjeta = crearTarjetaPedido(pedido);
@@ -202,9 +175,6 @@ function mostrarPedidos(pedidos) {
 }
 
 
-// =====================================================
-// CREAR TARJETA DE PEDIDO
-// =====================================================
 
 function crearTarjetaPedido(pedido) {
 
@@ -218,13 +188,7 @@ function crearTarjetaPedido(pedido) {
     if (pedido.estado === "Entregado") {
 
         tarjeta.classList.add("entregado");
-
     }
-
-
-    // =================================================
-    // CLASE DEL CHIP DE ESTADO
-    // =================================================
 
     let claseEstado = "";
 
@@ -247,17 +211,8 @@ function crearTarjetaPedido(pedido) {
 
     }
 
-
-    // =================================================
-    // ACCIONES
-    // =================================================
-
     let accionesHTML = "";
 
-
-    // =================================================
-    // PEDIDO PENDIENTE
-    // =================================================
 
     if (pedido.estado === "Pendiente") {
 
@@ -300,9 +255,6 @@ function crearTarjetaPedido(pedido) {
     }
 
 
-    // =================================================
-    // PEDIDO EN PREPARACIÓN
-    // =================================================
 
     else if (pedido.estado === "En preparación") {
 
@@ -325,6 +277,13 @@ function crearTarjetaPedido(pedido) {
                 </button>
 
                 <button
+                    class="volver"
+                    onclick="retrocederPedido(${pedido.idPedido})"
+                >
+                    ◀ Volver
+                </button>
+
+                <button
                     class="avanzar"
                     onclick="avanzarPedido(${pedido.idPedido})"
                 >
@@ -338,18 +297,6 @@ function crearTarjetaPedido(pedido) {
     }
 
 
-    // =================================================
-    // ENTREGADO
-    // =================================================
-    
-    // No agregamos botones.
-    // La consigna dice que un entregado
-    // no puede modificarse.
-
-
-    // =================================================
-    // HTML DE LA TARJETA
-    // =================================================
 
     tarjeta.innerHTML = `
 
@@ -396,11 +343,6 @@ function crearTarjetaPedido(pedido) {
 }
 
 
-// =====================================================
-// CREAR PEDIDO
-// POST /api/pedidos
-// =====================================================
-
 formulario.addEventListener("submit", async function (event) {
 
     event.preventDefault();
@@ -414,10 +356,6 @@ formulario.addEventListener("submit", async function (event) {
 
     const cantidad = Number(inputCantidad.value);
 
-
-    // =================================================
-    // VALIDACIONES
-    // =================================================
 
     if (!Number.isInteger(mesa) || mesa <= 0) {
 
@@ -446,10 +384,6 @@ formulario.addEventListener("submit", async function (event) {
     }
 
 
-    // =================================================
-    // ENVIAR PEDIDO
-    // =================================================
-
     try {
 
         const respuesta = await fetch(`${API_URL}/pedidos`, {
@@ -475,9 +409,6 @@ formulario.addEventListener("submit", async function (event) {
 
         const datos = await respuesta.json();
 
-
-        // Error
-
         if (!respuesta.ok) {
 
             alert(
@@ -490,20 +421,14 @@ formulario.addEventListener("submit", async function (event) {
 
         }
 
-
-        // Éxito
-
         alert("Pedido tomado correctamente.");
 
-
-        // Limpiar formulario
 
         formulario.reset();
 
         inputCantidad.value = 1;
 
 
-        // Actualizar lista
 
         cargarPedidos();
 
@@ -517,12 +442,6 @@ formulario.addEventListener("submit", async function (event) {
 
 });
 
-
-// =====================================================
-// GUARDAR CAMBIO DE CANTIDAD
-// PUT /api/pedidos/:id
-// =====================================================
-
 async function guardarPedido(idPedido) {
 
     const input = document.getElementById(
@@ -532,8 +451,6 @@ async function guardarPedido(idPedido) {
 
     const cantidad = Number(input.value);
 
-
-    // Validación
 
     if (!Number.isInteger(cantidad) || cantidad <= 0) {
 
@@ -576,11 +493,6 @@ async function guardarPedido(idPedido) {
             return;
 
         }
-
-
-        // =================================================
-        // PUT
-        // =================================================
 
         const respuesta = await fetch(
             `${API_URL}/pedidos/${idPedido}`,
@@ -635,17 +547,53 @@ async function guardarPedido(idPedido) {
 
 }
 
+async function retrocederPedido(idPedido) {
 
-// =====================================================
-// AVANZAR ESTADO
-// PUT /api/pedidos/:id
-// =====================================================
+    try {
+
+        const respuesta = await fetch(
+            `${API_URL}/pedidos/retroceder/${idPedido}`,
+            {
+                method: "PUT"
+            }
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if (!respuesta.ok) {
+
+            alert(
+                datos.mensaje ||
+                datos.error ||
+                "No se pudo retroceder el estado del pedido."
+            );
+
+            return;
+
+        }
+
+
+        cargarPedidos();
+
+
+    } catch (error) {
+
+        console.error("Error al retroceder pedido:", error);
+
+        alert("Error de conexión con el servidor.");
+
+    }
+
+}
+
+
 
 async function avanzarPedido(idPedido) {
 
     try {
 
-        // Obtener pedidos actuales
 
         const respuestaPedidos =
             await fetch(`${API_URL}/pedidos`);
@@ -676,11 +624,6 @@ async function avanzarPedido(idPedido) {
 
         }
 
-
-        // =================================================
-        // DETERMINAR SIGUIENTE ESTADO
-        // =================================================
-
         let nuevoEstado;
 
 
@@ -705,11 +648,6 @@ async function avanzarPedido(idPedido) {
             return;
 
         }
-
-
-        // =================================================
-        // ACTUALIZAR
-        // =================================================
 
         const respuesta = await fetch(
             `${API_URL}/pedidos/${idPedido}`,
@@ -765,17 +703,8 @@ async function avanzarPedido(idPedido) {
 }
 
 
-// =====================================================
-// CANCELAR PEDIDO
-// DELETE /api/pedidos/:id
-// =====================================================
 
 async function cancelarPedido(idPedido) {
-
-
-    // =================================================
-    // CONFIRMACIÓN
-    // =================================================
 
     const confirmar = confirm(
         "¿Está seguro de que desea cancelar este pedido?"
@@ -834,9 +763,64 @@ async function cancelarPedido(idPedido) {
 }
 
 
-// =====================================================
+
+async function consultarTotalMesa() {
+
+    const mesa = Number(inputMesaCuenta.value);
+
+
+    if (!Number.isInteger(mesa) || mesa <= 0) {
+
+        alert("Ingrese un número de mesa válido.");
+
+        return;
+
+    }
+
+
+    try {
+
+        const respuesta = await fetch(
+            `${API_URL}/pedidos/total-mesa/${mesa}`
+        );
+
+        const datos = await respuesta.json();
+
+
+        if (!respuesta.ok) {
+
+            alert(
+                datos.mensaje ||
+                datos.error ||
+                "No se pudo consultar la cuenta."
+            );
+
+            return;
+
+        }
+
+
+        divResultadoCuenta.innerHTML = `
+            <div class="resumen-cuenta" style="padding: 10px; background-color: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 5px;">
+                <p style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #2e7d32;">
+                    Total acumulado Mesa ${datos.mesa}: ${formatearPesos(datos.total)}
+                </p>
+            </div>
+        `;
+
+
+    } catch (error) {
+
+        console.error("Error al obtener la cuenta:", error);
+
+        alert("Error de conexión con el servidor.");
+
+    }
+
+}
+
+
 // FILTRO: TODOS
-// =====================================================
 
 btnTodos.addEventListener("click", () => {
 
@@ -847,9 +831,7 @@ btnTodos.addEventListener("click", () => {
 });
 
 
-// =====================================================
 // FILTRO: EN CURSO
-// =====================================================
 
 btnEnCurso.addEventListener("click", () => {
 
@@ -859,10 +841,6 @@ btnEnCurso.addEventListener("click", () => {
 
 });
 
-
-// =====================================================
-// FORMATO DE PESOS ARGENTINOS
-// =====================================================
 
 function formatearPesos(valor) {
 
